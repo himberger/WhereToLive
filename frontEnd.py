@@ -4,8 +4,8 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import re
 import numpy as np
 import scipy
-from PIL import Image
 PORT_NUMBER = 8080
+from skimage import io
 
 # This class will handles any incoming request from
 # the browser
@@ -68,7 +68,7 @@ class myHandler(BaseHTTPRequestHandler):
         return
 
 try:
-    storeImage={'ID1':np.array(Image.open("C:\Users\khimber1\Documents\K\WhereLive\wc2.0_10m_bio\wc2.0_bio_10m_01.tif")),'ID2':np.array(Image.open("C:\Users\khimber1\Documents\K\WhereLive\wc2.0_10m_bio\wc2.0_bio_10m_07.tif")),'ID3':np.array(Image.open("C:\Users\khimber1\Documents\K\WhereLive\wc2.0_10m_bio\wc2.0_bio_10m_12.tif"))}
+    storeImage={'ID1':np.array(io.imread("maps/wc2.0_bio_10m_01.tif")),'ID2':np.array(io.imread("maps/wc2.0_bio_10m_07.tif")),'ID3':np.array(io.imread("maps/wc2.0_bio_10m_12.tif"))}
     # Create a web server and define the handler to manage the
     # incoming request
     server = HTTPServer(('', PORT_NUMBER), myHandler)
