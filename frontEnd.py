@@ -8,7 +8,8 @@ import re
 import numpy as np
 import scipy
 from skimage import io
-
+import os.path
+                
 
 
 # This class will handles any incoming request from
@@ -47,11 +48,11 @@ class myHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             p = self.query_parser()
             if len(p) != 0:
                 self.path=self.path[:6] + '_'  + self.path[8:]+'.png'                
-                output = np.ones(np.shape(storeImage['ID1']),dtype=bool)
-                for key in p.keys():
-                    output = np.logical_and(output, storeImage[key]> p[key])
-                
-                scipy.misc.imsave(self.path[1:],output)
+                if not os.path.isfile(self.path):
+                    output = np.ones(np.shape(storeImage['ID1']),dtype=bool)
+                    for key in p.keys():
+                        output = np.logical_and(output, storeImage[key]> p[key])
+                    scipy.misc.imsave(self.path[1:],output)
         f = self.send_head()
         if f:
             try:
