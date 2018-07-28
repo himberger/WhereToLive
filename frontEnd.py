@@ -6,6 +6,7 @@ import numpy as np
 import scipy
 from skimage import io
 import os.path
+import matplotlib
                 
 PORT = 8001
 
@@ -47,10 +48,18 @@ class myHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             if len(p) != 0:
                 self.path=self.path[:6] + '_'  + self.path[8:]+'.png'                
                 if not os.path.isfile(self.path):
-                    output = np.ones(np.shape(storeImage['ID1']),dtype=bool)
+                    output = (storeImage['ID1']>-1000).astype(int)
                     for key in p.keys():
-                        output = np.logical_and(output, storeImage[key]> p[key])
-                    scipy.misc.imsave(self.path[1:],output)
+                        output = np.add(output, storeImage[key]> p[key])
+                    output = output * 127 / (len(p)+1)
+                    output = output+np.sign(output)*128
+                    output = output+np.sign(output)*np.sign(output-255)*64
+                    output_final = np.zeros([1080,2160,3],dtype='uint8')
+                    colormap = 255*np.array(matplotlib._cm_listed.cmaps['viridis'].colors)
+                    colormap[0,:] = [78,91,190]
+                    for idx in range(3):
+                        output_final[:,:,idx]=colormap[output,idx]
+                    scipy.misc.imsave(self.path[1:],output_final)
         f = self.send_head()
         if f:
             try:
