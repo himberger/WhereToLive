@@ -1,15 +1,19 @@
 #!/usr/bin/python
-# Web Handler from https://www.acmesystems.it/python_http
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
+import SimpleHTTPServer
+import SocketServer
+
+PORT = 8001
+
 import re
 import numpy as np
 import scipy
-PORT_NUMBER = 8080
 from skimage import io
+
+
 
 # This class will handles any incoming request from
 # the browser
-class myHandler(BaseHTTPRequestHandler):
+class myHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
     def query_parser(self):
         parsed = dict()
@@ -36,56 +40,30 @@ class myHandler(BaseHTTPRequestHandler):
         return parsed
 
 
-    # Handler for the GET requests
+   
     def do_GET(self):
-        # Send the html message
-
-
-        if self.path == "/":
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html')
-            self.end_headers()
-            self.wfile.write(self.path)  # Main homepage
-        elif self.path[:7] == "/query?":
+        if self.path[:7] == "/query?":
             # query time
             p = self.query_parser()
             if len(p) != 0:
-                # pass
+                self.path=self.path[:6] + '_'  + self.path[8:]+'.png'                
                 output = np.ones(np.shape(storeImage['ID1']),dtype=bool)
                 for key in p.keys():
                     output = np.logical_and(output, storeImage[key]> p[key])
-                scipy.misc.imsave('temp.png',output)
-                f=open('temp.gif')
-                self.send_response(200)
-                self.send_header('Content-type','image/gif')
-                self.end_headers()
-                self.wfile.write(f.read())
+                
+                scipy.misc.imsave(self.path[1:],output)
+        f = self.send_head()
+        if f:
+            try:
+                self.copyfile(f, self.wfile)
+            finally:
                 f.close()
 
-            else:
-                self.send_response(200)
-                self.send_header('Content-type', 'text/html')
-                self.end_headers()
-                self.wfile.write("ERROR: Query parsing was unsuccessful.")
-        else:
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html')
-            self.end_headers()
-            self.wfile.write("WARNING: " + self.path + "was the unknown directory")
-        return
+storeImage={'ID1':np.array(io.imread("maps/wc2.0_bio_10m_01.tif")), 
+            'ID2':np.array(io.imread("maps/wc2.0_bio_10m_07.tif")), 
+            'ID3':np.array(io.imread("maps/wc2.0_bio_10m_12.tif"))}
 
-try:
-    storeImage={'ID1':np.array(io.imread("maps/wc2.0_bio_10m_01.tif")), 
-                'ID2':np.array(io.imread("maps/wc2.0_bio_10m_07.tif")), 
-                'ID3':np.array(io.imread("maps/wc2.0_bio_10m_12.tif"))}
-    # Create a web server and define the handler to manage the
-    # incoming request
-    server = HTTPServer(('', PORT_NUMBER), myHandler)
-    print 'Started httpserver on port ', PORT_NUMBER
+httpd = SocketServer.TCPServer(("", PORT), myHandler)
 
-    # Wait forever for incoming htto requests
-    server.serve_forever()
-
-except KeyboardInterrupt:
-    print '^C received, shutting down the web server'
-    server.socket.close()
+print "serving at port", PORT
+httpd.serve_forever()
