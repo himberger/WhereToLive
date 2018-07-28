@@ -1,15 +1,13 @@
 #!/usr/bin/python
 import SimpleHTTPServer
 import SocketServer
-
-PORT = 8001
-
 import re
 import numpy as np
 import scipy
 from skimage import io
 import os.path
                 
+PORT = 8001
 
 
 # This class will handles any incoming request from
