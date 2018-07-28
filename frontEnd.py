@@ -38,37 +38,46 @@ class myHandler(BaseHTTPRequestHandler):
 
     # Handler for the GET requests
     def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
         # Send the html message
 
 
         if self.path == "/":
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
             self.wfile.write(self.path)  # Main homepage
         elif self.path[:7] == "/query?":
             # query time
             p = self.query_parser()
             if len(p) != 0:
                 # pass
-                output = np.true(np.size(storeImage['ID1']))
-                for key in p.keys:
-                    output = output and storeImage[key] > p[key]
+                output = np.ones(np.shape(storeImage['ID1']),dtype=bool)
+                for key in p.keys():
+                    output = np.logical_and(output, storeImage[key]> p[key])
                 scipy.misc.imsave('temp.png',output)
-                f=open('temp.png','r')
+                f=open('temp.gif')
                 self.send_response(200)
-                self.send_header('Content-type','image/png')
+                self.send_header('Content-type','image/gif')
+                self.end_headers()
                 self.wfile.write(f.read())
                 f.close()
 
             else:
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
                 self.wfile.write("ERROR: Query parsing was unsuccessful.")
         else:
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
             self.wfile.write("WARNING: " + self.path + "was the unknown directory")
         return
 
 try:
-    storeImage={'ID1':np.array(io.imread("maps/wc2.0_bio_10m_01.tif")),'ID2':np.array(io.imread("maps/wc2.0_bio_10m_07.tif")),'ID3':np.array(io.imread("maps/wc2.0_bio_10m_12.tif"))}
+    storeImage={'ID1':np.array(io.imread("maps/wc2.0_bio_10m_01.tif")), 
+                'ID2':np.array(io.imread("maps/wc2.0_bio_10m_07.tif")), 
+                'ID3':np.array(io.imread("maps/wc2.0_bio_10m_12.tif"))}
     # Create a web server and define the handler to manage the
     # incoming request
     server = HTTPServer(('', PORT_NUMBER), myHandler)
