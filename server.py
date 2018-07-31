@@ -50,9 +50,9 @@ class myHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
                 self.path=self.path[:6] + '_'  + self.path[8:]+'.png'                
                 if not os.path.isfile(self.path):
                     output = (storeImage[0]>-1000).astype(int)
-                    for key in p.keys():
-                        switch
-                        output = np.add(output, storeImage[key]> p[key])
+                    operations = [np.equal, np.greater, np.less]
+                    for op in p:
+                        output = np.add(output, operations[op[1]](storeImage[op[0]], op[2]))
                     output = output * 127 / (len(p)+1)
                     output = output+np.sign(output)*128
                     output = output+np.sign(output)*np.sign(output-255)*64
