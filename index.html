@@ -36,13 +36,19 @@
 
       function addc() {
         myliste.push([select1.value, select2.value, myvalue.value])
+        renderer()
+      }
+      function deletec(idx) {
+	      myliste.splice(idx,1)
+        renderer()
+      }
+      function renderer(){
         htmlcollector = ''
         for (var idx = 0; idx < myliste.length; ++idx){
-        	htmlcollector += categories[myliste[idx][0]] + " " + select2.options[myliste[idx][1]].innerText + " " + myliste[idx][2] + "<br />"
+        	htmlcollector += categories[myliste[idx][0]] + " " + select2.options[myliste[idx][1]].innerText + " " + myliste[idx][2] +  " <button type='button' onclick='deletec(" + idx + ")'>Delete</button><br /><br />"
         }
         huhu.innerHTML = htmlcollector
       }
-
     </script>
   </body>
 </html>
