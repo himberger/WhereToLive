@@ -1,6 +1,6 @@
 #!/usr/bin/python
-import SimpleHTTPServer
-import SocketServer
+import http.server
+import socketserver
 import re
 import numpy as np
 import scipy
@@ -14,7 +14,7 @@ PORT = 8001
 
 # This class will handles any incoming request from
 # the browser
-class myHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
+class myHandler(http.server.SimpleHTTPRequestHandler):
 
     def query_parser(self):
         parsed = list()
@@ -75,7 +75,7 @@ storeImage = [];
 for map in maps:
     storeImage.append(np.array(io.imread("maps/"+map[1])))
 
-httpd = SocketServer.TCPServer(("", PORT), myHandler)
+httpd = socketserver.TCPServer(("", PORT), myHandler)
 
-print "serving at port", PORT
+print ("serving at port"), PORT
 httpd.serve_forever()
