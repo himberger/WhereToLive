@@ -26,7 +26,7 @@ loadJSON("maps.json", function(response) {
     fname = document.getElementById('fname')
     huhu = document.getElementById('huhu')
     image1 = document.getElementById('image1')
-}
+})
 
 function addc() {
     myliste.push([select1.value, select2.value, myvalue.value])
