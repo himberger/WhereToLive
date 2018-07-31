@@ -7,6 +7,7 @@ import scipy
 from skimage import io
 import os.path
 import matplotlib
+import json
                 
 PORT = 8001
 
@@ -16,26 +17,26 @@ PORT = 8001
 class myHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
 
     def query_parser(self):
-        parsed = dict()
+        parsed = list()
 
         searches = re.split("&", self.path[7:])
 
         for q in range(len(searches)):  # iterate through number of search terms
             if "=" in searches[q]:
-                sqs = re.split("=", searches[q])
+                sqs = re.split("_", searches[q])
                 if len(sqs) != 2:
-                    return dict()
+                    return list()
                 else: # Normal processing
-                    if sqs[0] in ["ID1", "ID2", "ID3"]:
+                    if sqs[1] in ["0", "1", "2"] and sqs[0] in [str(idx) for idx in range(len(storeImage))]:
                         sqs[1] = unicode(sqs[1], 'utf-8')
                         if not sqs[1].isnumeric():
-                            return dict()
+                            return list()
                         else:  # It is numeric
-                            parsed[sqs[0]] = int(sqs[1])
+                            parsed.append = [int(sqs[1]),int(sqs[1]),float(sqs[2])]
                     else:  # Not a known search type
-                        return dict()
+                        return list()
             else:
-                return dict()
+                return list()
 
         return parsed
 
@@ -48,8 +49,9 @@ class myHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             if len(p) != 0:
                 self.path=self.path[:6] + '_'  + self.path[8:]+'.png'                
                 if not os.path.isfile(self.path):
-                    output = (storeImage['ID1']>-1000).astype(int)
+                    output = (storeImage[0]>-1000).astype(int)
                     for key in p.keys():
+                        switch
                         output = np.add(output, storeImage[key]> p[key])
                     output = output * 127 / (len(p)+1)
                     output = output+np.sign(output)*128
@@ -66,10 +68,12 @@ class myHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
                 self.copyfile(f, self.wfile)
             finally:
                 f.close()
-
-storeImage={'ID1':np.array(io.imread("maps/wc2.0_bio_10m_01.tif")), 
-            'ID2':np.array(io.imread("maps/wc2.0_bio_10m_07.tif")), 
-            'ID3':np.array(io.imread("maps/wc2.0_bio_10m_12.tif"))}
+f = open('maps.json', 'r')
+maps = json.loads(f.read())
+f.close()
+storeImage = [];
+for map in maps:
+    storeImage.append(np.array(io.imread("maps/"+map[1])))
 
 httpd = SocketServer.TCPServer(("", PORT), myHandler)
 
