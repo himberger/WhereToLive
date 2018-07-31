@@ -7,14 +7,11 @@
 
   <body>
     <select id="select1">
-      <option value="bio1">Annual Mean Temperature</option>
-      <option value="bio7">Temperature Annual Range</option>
-      <option value="bio12">Annual Precipitation</option>
     </select>
     <select id="select2">
-      <option value="equal">=</option>
-      <option value="gt">&gt;</option>
-      <option value="lt">&lt;</option>
+      <option value="0">=</option>
+      <option value="1">&gt;</option>
+      <option value="2">&lt;</option>
     </select>
     <input type="text" id="myvalue"><br>
     <button type="button" onclick="addc()">Add criterium</button>
@@ -23,18 +20,29 @@
     </div>
 
     <script>
+    var categories = ['Annual Mean Temperature','Temperature Annual Range','Annual Precipitation']
+    select1 = document.getElementById('select1')
+      
+    for(var idx = 0; idx < categories.length; ++idx) {
+        var option = document.createElement('option')
+        option.text = categories[idx]
+        option.value = "" + idx;
+        select1.add(option, 0);
+    }
       myliste = []
-      select1 = document.getElementById('select1')
       select2 = document.getElementById('select2')
       fname = document.getElementById('fname')
       huhu = document.getElementById('huhu')
 
       function addc() {
-        myliste = myliste + select1.value + select2.value + myvalue.value
-        huhu.innerHTML = myliste
+        myliste.push([select1.value, select2.value, myvalue.value])
+        htmlcollector = ''
+        for (var idx = 0; idx < myliste.length; ++idx){
+        	htmlcollector += categories[myliste[idx][0]] + " " + select2.options[myliste[idx][1]].innerText + " " + myliste[idx][2] + "<br />"
+        }
+        huhu.innerHTML = htmlcollector
       }
 
     </script>
   </body>
-</html>
 </html>
