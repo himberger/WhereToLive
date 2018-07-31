@@ -16,7 +16,11 @@
     <input type="text" id="myvalue"><br>
     <button type="button" onclick="addc()">Add criterium</button>
     <div id="huhu">
-      hallo
+    <br />
+    </div>
+    <div>
+      <button type="button" id="button2" onclick="updatec()" disabled>Update</button>
+      <img id="image1" scr="temp.png" />
     </div>
 
     <script>
@@ -33,6 +37,7 @@
       select2 = document.getElementById('select2')
       fname = document.getElementById('fname')
       huhu = document.getElementById('huhu')
+			image1 = document.getElementById('image1')
 
       function addc() {
         myliste.push([select1.value, select2.value, myvalue.value])
@@ -48,6 +53,14 @@
         	htmlcollector += categories[myliste[idx][0]] + " " + select2.options[myliste[idx][1]].innerText + " " + myliste[idx][2] +  " <button type='button' onclick='deletec(" + idx + ")'>Delete</button><br /><br />"
         }
         huhu.innerHTML = htmlcollector
+        document.getElementById('button2').disabled=myliste.length==0
+      }
+      function updatec() {
+      	imagesrc = "query?"
+        for (var idx = 0; idx<myliste.length; ++idx){
+          imagesrc += myliste[idx][0]+"_"+myliste[idx][1]+"_"+myliste[idx][2]
+        }
+        image1.src=imagesrc
       }
     </script>
   </body>
