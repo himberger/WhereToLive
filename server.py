@@ -47,11 +47,10 @@ class myHandler(http.server.SimpleHTTPRequestHandler):
                     output = (storeImage[0]>-1000).astype(int)
                     operations = [np.equal, np.greater, np.less]
                     for op in p:
-                        output = np.add(output, operations[op[1]](storeImage[op[0]], op[2]))
-                    output_temp = output;
+                        output = np.add(output, np.logical_and(output>0,operations[op[1]](storeImage[op[0]], op[2])))
                     output = output * 127 / (len(p)+1)
-                    output = output+np.sign(output_temp)*128
-                    output = output+np.sign(output_temp)*np.sign(output_temp-(len(p)+1))*64
+                    output = output+np.sign(output)*128
+                    output = output+np.sign(output)*np.sign(output-255)*64
                     output_final = np.zeros([1080,2160,3],dtype='uint8')
                     colormap = 255*np.array(matplotlib._cm_listed.cmaps['viridis'].colors)
                     colormap[0,:] = [78,91,190]
