@@ -22,22 +22,18 @@ class myHandler(http.server.SimpleHTTPRequestHandler):
         searches = re.split("&", self.path[7:])
 
         for q in range(len(searches)):  # iterate through number of search terms
-            if "=" in searches[q]:
-                sqs = re.split("_", searches[q])
-                if len(sqs) != 2:
-                    return list()
-                else: # Normal processing
-                    if sqs[1] in ["0", "1", "2"] and sqs[0] in [str(idx) for idx in range(len(storeImage))]:
-                        sqs[1] = unicode(sqs[1], 'utf-8')
-                        if not sqs[1].isnumeric():
-                            return list()
-                        else:  # It is numeric
-                            parsed.append = [int(sqs[1]),int(sqs[1]),float(sqs[2])]
-                    else:  # Not a known search type
-                        return list()
-            else:
+            sqs = re.split("_", searches[q])
+            if len(sqs) != 3:
                 return list()
-
+            else: # Normal processing
+                if sqs[1] in ["0", "1", "2"] and sqs[0] in [str(idx) for idx in range(len(storeImage))]:
+                    sqs[1] = unicode(sqs[1], 'utf-8')
+                    if not sqs[1].isnumeric():
+                        return list()
+                    else:  # It is numeric
+                        parsed.append = [int(sqs[1]),int(sqs[1]),float(sqs[2])]
+                else:  # Not a known search type
+                   return list()
         return parsed
 
 
