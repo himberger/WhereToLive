@@ -41,7 +41,7 @@ function deletec(idx) {
 function renderer(){
     htmlcollector = ''
     for (var idx = 0; idx < myliste.length; ++idx){
-        htmlcollector += maps[myliste[idx][0]] + " " + select2.options[myliste[idx][1]].innerText + " " + myliste[idx][2] +  " <button type='button' onclick='deletec(" + idx + ")'>Delete</button><br /><br />"
+        htmlcollector += maps[myliste[idx][0]][0] + " " + select2.options[myliste[idx][1]].innerText + " " + myliste[idx][2] +  " <button type='button' onclick='deletec(" + idx + ")'>Delete</button><br /><br />"
     }
     huhu.innerHTML = htmlcollector
     document.getElementById('button2').disabled=myliste.length==0
