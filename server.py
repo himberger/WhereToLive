@@ -8,7 +8,8 @@ from skimage import io
 import os.path
 import matplotlib
 import json
-                
+import ipdb               
+from PIL import Image
 PORT = 8001
 
 
@@ -18,7 +19,6 @@ class myHandler(http.server.SimpleHTTPRequestHandler):
 
     def query_parser(self):
         parsed = list()
-
         searches = re.split("&", self.path[7:])
 
         for q in range(len(searches)):  # iterate through number of search terms
@@ -27,11 +27,10 @@ class myHandler(http.server.SimpleHTTPRequestHandler):
                 return list()
             else: # Normal processing
                 if sqs[1] in ["0", "1", "2"] and sqs[0] in [str(idx) for idx in range(len(storeImage))]:
-                    sqs[1] = unicode(sqs[1], 'utf-8')
-                    if not sqs[1].isnumeric():
+                    if not sqs[2].isnumeric():
                         return list()
                     else:  # It is numeric
-                        parsed.append = [int(sqs[1]),int(sqs[1]),float(sqs[2])]
+                        parsed.append([int(sqs[0]),int(sqs[1]),float(sqs[2])])
                 else:  # Not a known search type
                    return list()
         return parsed
@@ -56,8 +55,8 @@ class myHandler(http.server.SimpleHTTPRequestHandler):
                     colormap = 255*np.array(matplotlib._cm_listed.cmaps['viridis'].colors)
                     colormap[0,:] = [78,91,190]
                     for idx in range(3):
-                        output_final[:,:,idx]=colormap[output,idx]
-                    scipy.misc.imsave(self.path[1:],output_final)
+                        output_final[:,:,idx]=colormap[output.astype(int),idx]
+                    Image.fromarray(output_final).save(self.path[1:])
         f = self.send_head()
         if f:
             try:
