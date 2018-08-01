@@ -50,7 +50,7 @@ function renderer(){
 function updatec() {
     imagesrc = "query?"
     for (var idx = 0; idx<myliste.length; ++idx){
-        imagesrc += myliste[idx][0]+"_"+myliste[idx][1]+"_"+myliste[idx][2]
+        imagesrc += myliste[idx][0]+"_"+myliste[idx][1]+"_"+myliste[idx][2]+"&" 
     }
-    image1.src=imagesrc
+    image1.src=imagesrc.substring(0,imagesrc.length-1)
 }
